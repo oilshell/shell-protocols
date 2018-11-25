@@ -1,4 +1,4 @@
-### Demo of the FCLI Coprocess Protocl
+### Demo of the FCLI Coprocess Protocol
 
 
 ### Links
