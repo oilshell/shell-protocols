@@ -60,6 +60,11 @@ It's now **faster**.  Try these commands as well:
 $ time seq 10 | echolines-fcli --prefix / >out.txt 2>err.txt
 $ head out.txt err.txt
 
+# status works
+$ time seq 10 | echolines-fcli --prefix / --status 42
+$ echo $?
+42
+
 # Add a delay before each line
 $ time seq 10 | echolines-fcli --prefix / --delay-ms 50
 
