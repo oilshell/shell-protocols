@@ -14,8 +14,8 @@ import fcli_server_lib
 import util
 log = util.log
 
-# 300 ms sleep.  This is the startup time we want to save.
-time.sleep(0.3)
+# 200 ms sleep.  This is the startup time we want to save.
+time.sleep(0.2)
 
 
 def Options():
@@ -23,13 +23,16 @@ def Options():
 
   p = optparse.OptionParser('fcli_driver.py [OPTION] ARG...')
   p.add_option(
-      '--prefix', dest='prefix', default='',
+      '-p', '--prefix', dest='prefix', default='',
       help='Print a prefix on every line')
   p.add_option(
-      '--delay-ms', dest='delay_ms', default=0,
+      '-d', '--delay-ms', dest='delay_ms', default=0,
       help='Wait this number of milliseconds between every line.')
   p.add_option(
-      '--status', dest='status', type=int, default=0,
+      '-l', '--ls', dest='ls', default=False, action='store_true',
+      help='List files in the current directory.')
+  p.add_option(
+      '-s', '--status', dest='status', type=int, default=0,
       help='Exit with this status')
 
   # Blow up the input or reduce it. For testing the event loop.
@@ -46,7 +49,6 @@ def main(argv):
   for arg in argv:
     log('arg = %r', arg)
 
-  start_time = time.time()
   seconds = float(opts.delay_ms) / 1000.0
 
   i = 0
@@ -67,7 +69,15 @@ def main(argv):
       prob -= 1.0
       i += 1
 
-  log('Wrote %d lines in %.3f seconds', i, time.time() - start_time)
+  if opts.ls:
+    for entry in os.listdir('.'):
+      time.sleep(seconds)
+      print(entry)
+      sys.stdout.flush()
+
+      i += 1
+
+  print('[stderr] Wrote %d lines' % i, file=sys.stderr)
 
   return opts.status
 

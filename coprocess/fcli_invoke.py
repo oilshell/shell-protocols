@@ -63,6 +63,9 @@ def ParseResponse(fcli_reply_args):
   return status, error_str
 
 
+THIS_DIR = os.path.dirname(os.path.abspath(sys.argv[0]))
+
+
 def main(argv):
   p = Options()
   (opts, argv) = p.parse_args(argv[1:])
@@ -70,9 +73,9 @@ def main(argv):
   # Create private named pipes for this instance.  Anonymous pipes don't work,
   # because they can't be inherited.
 
-  fifo_stdin = '_tmp/stdin'
-  fifo_stdout = '_tmp/stdout'
-  fifo_stderr = '_tmp/stderr'
+  fifo_stdin = os.path.join(THIS_DIR, '_tmp/stdin')
+  fifo_stdout = os.path.join(THIS_DIR, '_tmp/stdout')
+  fifo_stderr = os.path.join(THIS_DIR, '_tmp/stderr')
 
   try:
     os.mkfifo(fifo_stdin)
