@@ -124,12 +124,11 @@ def main(argv):
   # NOTE: Does this cause 3 separate context switches because of the blocking?
 
   log('open stdin')
-  #their_stdin_fd = os.open(fifo_stdin, os.O_RDWR)  # write
   their_stdin_fd = os.open(fifo_stdin, os.O_WRONLY)  # write
   log('open stdout')
-  their_stdout_fd = os.open(fifo_stdout, os.O_RDONLY)  # read, no block
+  their_stdout_fd = os.open(fifo_stdout, os.O_RDONLY)  # read
   log('open stderr')
-  their_stderr_fd = os.open(fifo_stderr, os.O_RDONLY)  # read, no block
+  their_stderr_fd = os.open(fifo_stderr, os.O_RDONLY)  # read
   log('done opening')
 
   log('their_stdin_fd = %d, their_stdout_fd = %d, their_stderr_fd = %d',
@@ -154,16 +153,8 @@ def main(argv):
   to_write = {}  # fd -> bytes
   r_eof = set()
 
-  # TODO: Test case:
-  # stdin is really fast, while outputs 1% of it with sleeps in between.
-  # we should have a limited buffer here.
-
   # Now enter an event loop for stdin/stdout/stderr.
   while True:
-    # PROBLEM: 1 and 2 will always be ready for write?
-    # how do we tell if we're done?
-    # Do we need two selects?
-
     if not r_wait:
       break
 
@@ -174,7 +165,7 @@ def main(argv):
     if not r_ready:
       break
 
-    # read at least one?
+    # Read from ready descriptors.
     for r in r_ready:
       w = rw_lookup[r]
       b = os.read(r, PIPE_SIZE)
@@ -185,7 +176,7 @@ def main(argv):
 
     r_not_ready = set(r_wait) - set(r_ready)
 
-    # Wait for ones with data
+    # Wait for ones with data to write.
     w_wait = [rw_lookup[r] for r in r_ready]
 
     log('w_wait = %r', w_wait)
