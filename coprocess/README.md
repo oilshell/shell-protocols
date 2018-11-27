@@ -118,8 +118,13 @@ In addition to the expected wrapping `main()` with `fcli_server_lib`:
 
 - Process management and concurrency: imagine `echolines-fcli |
   echolines-fcli`.
-  - Need to manage the named pipes.  (Yes, named pipes are pain.  Unix domain
-    sockets would also work, although the server should not be concurrent.)
+  - Need to manage the named pipes, or maybe switch to Unix sockets.
+- Experiment with descriptor passing over a Unix socket, instead of copying.
+  - This should also allow us to implement the [Make jobserver
+    protocol](https://www.gnu.org/software/make/manual/html_node/POSIX-Jobserver.html),
+    which [redo][] uses.
+- Maybe use the pre-forking server model for concurrency?  A single Unix socket
+  and 10 replicas?  This gives you semantics somewhat like `xargs -P` for free.
 - Signals (Ctrl-C)
 - Handle unexpected server exit.
 - Check protocol errors on both the client and server.  This already exists in
@@ -133,3 +138,7 @@ In addition to the expected wrapping `main()` with `fcli_server_lib`:
   as easily as possible.  We don't want to modify every print statement in the
   program.
 - [joblimate](https://github.com/apenwarr/joblimate)
+- [redo][] -- An application where startup time is important.
+
+[redo]: https://redo.readthedocs.io/en/latest/
+
