@@ -119,6 +119,10 @@ In addition to the expected wrapping `main()` with `fcli_server_lib`:
 - Process management and concurrency: imagine `echolines-fcli |
   echolines-fcli`.
   - Need to manage the named pipes, or maybe switch to Unix sockets.
+  - fcli_invoke.py or the shell should **start** new coprocesses when necessary,
+    according to an FCLI_CONCURRENCY variable or a --concurrency flag.  The default
+    could live on the file system near the control socket, but it could be overridden per
+    invocation.
 - Experiment with descriptor passing over a Unix socket, instead of copying.
   - This should also allow us to implement the [Make jobserver
     protocol](https://www.gnu.org/software/make/manual/html_node/POSIX-Jobserver.html),
